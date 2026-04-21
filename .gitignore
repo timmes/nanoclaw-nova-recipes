@@ -1,0 +1,9 @@
+.DS_Store
+.env
+.env.local
+node_modules/
+*.log
+
+# Personal data that shouldn't leak into the repo even accidentally
+*.private.md
+**/secrets/
