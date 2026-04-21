@@ -34,15 +34,15 @@ vault/
 │   ├── DecisionLog.md           # "that's a decision" lands here; Nova won't re-ask
 │   └── Inbox/                   # Unsorted captures
 ├── 01_Adults/                   # Per-adult folders (privacy-respecting)
-│   ├── Tim/
-│   └── Jules/
+│   ├── Adult1/
+│   └── Adult2/
 ├── 02_Family/                   # Shared family data
 │   ├── Briefings/YYYY/MM/       # Morning/weekly briefings get archived here
 │   └── Expenses/YYYY/           # Monthly expense ledgers (YYYY-MM.md)
 ├── 03_Kids/                     # Per-child folders
-│   ├── Holly/School/Events.md
-│   ├── Holly/Kindergarten/Overview.md
-│   └── Hugo/Kindergarten/Overview.md
+│   ├── Kid1/School/Events.md
+│   ├── Kid1/Kindergarten/Overview.md
+│   └── Kid2/Kindergarten/Overview.md
 ├── 04_Home/                     # Household
 │   ├── Grocery/                 # Current Plan.md, Flyers/, Archive/, Price History.json
 │   ├── Inventory/Appliances.md  # Photo of an appliance → appended here
