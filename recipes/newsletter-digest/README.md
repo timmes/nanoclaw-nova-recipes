@@ -17,16 +17,17 @@ Every day at 05:00 local, Nova:
 | File | Purpose |
 | --- | --- |
 | [`CLAUDE.md.snippet`](CLAUDE.md.snippet) | Paste into your group's `CLAUDE.md`. The full 10-step procedure, with `<your-github-user>`, `<your-digest-repo>`, `<you@example.com>` placeholders to replace. |
-| [`NovaNewsletterDigest.html`](NovaNewsletterDigest.html) | Email template (Inter Tight / Newsreader / JetBrains Mono). Contains `href="#"` placeholders that Nova fills in — the snippet tells her which URLs go where. |
+| [`NovaNewsletterDigest.html`](NovaNewsletterDigest.html) | Email template. Contains `href="#"` placeholders that Nova fills in — the snippet tells her which URLs go where. |
 | [`newsletter-favorites.json.example`](newsletter-favorites.json.example) | Sources you want boosted + topic weights. Rename to `newsletter-favorites.json` in your digest folder. |
 | [`newsletter-trends.json.example`](newsletter-trends.json.example) | Starter schema for the rolling 30-day trend tracker. Start from this empty shape; Nova grows it. |
 | [`scheduled-task.yaml`](scheduled-task.yaml) | The cron entry + prompt you add to `scheduled_tasks`. |
+| [`html2md`](html2md) | Self-contained Node.js script (no npm deps) that converts HTML to clean Markdown. Strips tracking pixels, hidden elements, and layout tables. Ships with NanoClaw at `container/tools/html2md` — included here as reference. |
 
 ## Install
 
 1. **Merge the required skill branches** into your NanoClaw fork:
    - `/add-gmail` — Gmail tool (list, read-html, archive, send)
-   - `html2md` tool is already in the container at `/app/container/tools/html2md`
+   - `html2md` — bundled with NanoClaw at `container/tools/html2md`. If your fork predates it, copy [`html2md`](html2md) from this recipe into `container/tools/` (make it executable) and rebuild the container. It's a self-contained Node script — no npm install needed.
 
 2. **Create a public GitHub repo** for the digest archive (e.g. `daily-newsletter-digest`). Generate a personal access token with `contents:write` and save it to `<nanoclaw>/secrets/github-token.txt`.
 
