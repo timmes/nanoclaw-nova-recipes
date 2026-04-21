@@ -1,0 +1,15 @@
+{
+  "entries": [
+    {
+      "theme": "Short descriptive label for a recurring theme across newsletters",
+      "description": "1-3 sentence summary of what's being said about this theme, citing the sources. Nova rewrites this description each day as new articles arrive, so the latest snapshot replaces older text.",
+      "first_seen": "2026-01-15",
+      "last_seen": "2026-01-21",
+      "count": 7,
+      "sources": [
+        "Source Publication A",
+        "Source Publication B"
+      ]
+    }
+  ]
+}

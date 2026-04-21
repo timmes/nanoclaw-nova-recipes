@@ -1,0 +1,73 @@
+<!--
+Paste this into your group's CLAUDE.md (e.g. groups/<your-group>/CLAUDE.md).
+Replace placeholders:
+  <your-github-user>      — GitHub username that owns the digest archive repo
+  <your-digest-repo>      — name of the digest archive repo (e.g. daily-newsletter-digest)
+  <you@example.com>       — the email address that receives the rendered digest
+-->
+
+## Daily Newsletter Digest (daily at 05:00 local)
+
+When I receive the scheduled `newsletter-digest` task, I MUST follow these steps in order:
+
+1. **Read newsletters** — Run `gmail list --after today --label Newsletter --limit 50` to find newsletter emails from the last 24 hours. **If the list is empty, stop here: do NOT create a digest, do NOT update README, do NOT git push, do NOT send email, do NOT send a WhatsApp summary.** Log "no newsletters today, skipping digest" and exit. Otherwise, for each newsletter email, run `gmail read-html <id> | html2md` to get the content as markdown.
+
+2. **Save raw markdown** — Save each newsletter's markdown to `/workspace/extra/newsletter/source/YYYY-MM-DD/` with a filename based on the sender (e.g. `tldr.md`, `morning-brew.md`). After saving each newsletter, archive it: `gmail archive --id <id>` (marks as read and removes from inbox).
+
+3. **Rank and select** — Read `/workspace/extra/newsletter/newsletter-favorites.json` for favorites and topics. Score each article/item based on:
+   - Favorite newsletter boost (multiply score by `boost_factor`)
+   - Topic relevance to the configured topics list
+   - Max `max_items_per_newsletter` items per source
+
+   Select the top 15–20 items across all newsletters.
+
+   **Deduplicate against yesterday.** Read yesterday's digest at `/workspace/extra/newsletter/YYYY/MM/<yesterday>.md` (if it exists). Extract all item titles and URLs from its Top Stories and Quick Links sections. Drop any of today's candidate items whose title OR URL matches an item from yesterday's digest (normalize: lowercase, strip tracking params from URLs, trim whitespace). If after dedup fewer than 3 items remain across all sections, stop here: do NOT create a digest, do NOT update README, do NOT git push, do NOT send email, do NOT send a WhatsApp summary. Log "digest too thin after dedup, skipping" and exit.
+
+4. **Track trends** — Read `/workspace/extra/newsletter/newsletter-trends.json`. Identify recurring themes across today's newsletters. Update the trends file: add new trends with today's date, increment count for existing trends, remove trends older than 30 days.
+
+5. **Create digest markdown** — Write the digest to `/workspace/extra/newsletter/YYYY/MM/YYYY-MM-DD.md` with this structure:
+   ```
+   # Daily Newsletter Digest - YYYY-MM-DD
+
+   ## Top Stories
+   [Ranked items with source attribution, 5-6 sentence summary each providing enough context to understand the key takeaways without reading the original]
+
+   ## Trending
+   [Top 3 recurring themes from trend tracking]
+
+   ## Quick Links
+   [Remaining notable items as bullet points with links]
+   ```
+
+6. **Update README.md** — Update `/workspace/extra/newsletter/README.md`:
+   - Add today's digest link to the current month's table: `| YYYY-MM-DD | [Daily Newsletter Digest - YYYY-MM-DD](YYYY/MM/YYYY-MM-DD.md) |`
+   - If today is the first digest of a new month, add a new `## Month YYYY` heading with a fresh table before adding the link.
+   - If today is the first digest of a new year, remove all previous month headings and tables from the README. Add a single archive link under a `## Archive` section: `- [YYYY](YYYY/)`. Then add the new year's first month heading and table.
+   - Newest entries go at the top of each table.
+
+7. **Git push** — Run these commands in `/workspace/extra/newsletter/`:
+   ```bash
+   cd /workspace/extra/newsletter
+   TOKEN=$(cat /workspace/secrets/github-token.txt)
+   git remote set-url origin https://x-access-token:${TOKEN}@github.com/<your-github-user>/<your-digest-repo>.git
+   git add -A && git commit -m "digest: YYYY-MM-DD" && git push
+   ```
+   If push fails, skip silently.
+
+8. **Create HTML email** — Read the template at `/workspace/extra/templates/NovaNewsletterDigest.html` and populate it with the digest content (top stories, trending themes, quick links, date). Do not alter the template's styles or structure — only fill in content. This template is read-only; render the final HTML to stdout or a temp file for the next step.
+
+   **Populate ALL `href="#"` placeholders** in the template — they are not decorative. Specifically:
+   - The **"View on GitHub"** link (near the footer) MUST point to the markdown file for this digest in the GitHub repo: `https://github.com/<your-github-user>/<your-digest-repo>/blob/main/YYYY/MM/YYYY-MM-DD.md` (using the target date of this digest). Never leave it as `#`.
+   - Each top-story and quick-link `href="#"` MUST be replaced with the article's actual source URL.
+   - Any CTA/button `href="#"` MUST be replaced with the relevant destination URL, or the surrounding element removed if no URL applies.
+
+   Before rendering, verify there are no remaining `href="#"` in the output.
+
+9. **Send email** — Run `gmail send --to <you@example.com> --subject "Daily Newsletter Digest - YYYY-MM-DD" --html` and pipe the HTML content to it.
+
+10. **Send WhatsApp summary** — Send a single WhatsApp message with a brief summary (under 80 words):
+    - 📰 *Daily Newsletter Digest - YYYY-MM-DD*
+    - Top 3 headlines with source attribution
+    - "Full digest emailed & pushed to GitHub"
+
+    After sending the WhatsApp message, do NOT produce any final response text.

@@ -1,0 +1,18 @@
+{
+  "favorites": [
+    "Newsletter You Always Read A",
+    "Newsletter You Always Read B",
+    "Publication Whose Opinions You Trust"
+  ],
+  "topics": [
+    "artificial intelligence (AI)",
+    "machine learning (ml)",
+    "cloud computing",
+    "product management",
+    "developer tools",
+    "software architecture",
+    "leadership"
+  ],
+  "boost_factor": 2,
+  "max_items_per_newsletter": 5
+}
