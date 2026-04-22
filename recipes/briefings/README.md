@@ -26,14 +26,17 @@ Both are delivered as a **single** message. After sending, Nova silently files t
 | --- | --- |
 | [`CLAUDE.md.snippet`](CLAUDE.md.snippet) | Paste into your group's `CLAUDE.md`. Contains both briefing sections with `Kid1`, `Kid2`, and `<your-postcode> <your-city>, <your-country>` placeholders to replace. |
 | [`scheduled-tasks.yaml`](scheduled-tasks.yaml) | Two cron entries (`0 7 * * *` and `0 18 * * 0`) to add to `store/messages.db:scheduled_tasks`. |
+| [`gcal`](gcal) | **Not part of NanoClaw.** A self-contained Node.js CLI wrapping the Google Calendar API with a service-account JWT. Drop it into `container/tools/` in your NanoClaw fork and rebuild the container. No npm deps. |
 
 ## Install
 
-1. **Make sure the `gcal` container tool is wired up.** It ships with NanoClaw at `container/tools/gcal`. You need:
-   - A Google service account with Calendar API access
-   - The service account JSON key saved to `<nanoclaw>/secrets/gcal-key.json`
-   - The calendar ID exported via `GCAL_CALENDAR_ID` (or leave as primary)
-   - The service account invited to the family calendar as a writer
+1. **Install the `gcal` container tool.** It is *not* part of NanoClaw — copy [`gcal`](gcal) from this recipe into `<nanoclaw>/container/tools/` (make it executable) and rebuild the container with `./container/build.sh`. NanoClaw's Dockerfile copies `container/tools/*` into `/usr/local/bin/`, so after rebuild the `gcal` command is on `PATH` inside every agent container. No npm install needed — it talks to the Google Calendar REST API directly over `https` with a service-account JWT.
+
+   You also need:
+   - A Google Cloud service account with the Calendar API enabled
+   - The service account JSON key saved to `<nanoclaw>/secrets/gcal-key.json` (mounted into the container at `/workspace/secrets/gcal-key.json`)
+   - The service account's email invited to your family Google Calendar as a writer (Calendar → Settings → Share with specific people)
+   - The calendar ID exported via `GCAL_CALENDAR_ID` (default: `primary`)
 
 2. **Mount your Obsidian vault** into the group's container. Update the group's `container_config.additionalMounts`:
    ```json
@@ -73,6 +76,6 @@ Obsidian sync is eventually consistent. Writing to the vault before sending mean
 ## Prerequisites
 
 - NanoClaw installed, running, and a WhatsApp (or other) channel registered
-- `gcal` container tool configured with a Google service account
+- `gcal` dropped into `container/tools/` (from this recipe — it is not part of NanoClaw) + a Google service account with Calendar API access
 - Obsidian (or any markdown-based) vault mounted into the group's container
 - (Optional) The [expense-tracking](../expense-tracking/) recipe installed if you want the `💸 EXPENSES` line in the weekly briefing to be non-empty
