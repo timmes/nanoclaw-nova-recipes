@@ -1,0 +1,65 @@
+<!--
+Paste this into your group's CLAUDE.md (e.g. groups/<your-group>/CLAUDE.md).
+Replace placeholders:
+  <your-postcode> <your-city>, <your-country>  — used for weather lookup
+  Kid1, Kid2                                   — your children's names (as used in vault paths)
+  Adult1, Adult2                               — the adults Nova coordinates for
+
+Prerequisites (documented in this recipe's README):
+- `gcal` container tool wired to your Google Calendar (service account key at /workspace/secrets/gcal-key.json)
+- Obsidian vault mounted at /workspace/extra/vault with the structure described in the top-level README
+-->
+
+## Morning Briefing (daily at 07:00)
+
+When I receive the scheduled morning briefing task, I MUST follow these steps in order:
+
+1. **Calendar** — Run `gcal today` via Bash to get today's events.
+2. **Kids info** — Read these vault files (create/adapt paths to match your own vault):
+   - `/workspace/extra/vault/Kids/Kid1/School/Events.md`
+   - `/workspace/extra/vault/Kids/Kid1/Kindergarten/Overview.md`
+   - `/workspace/extra/vault/Kids/Kid2/Kindergarten/Overview.md`
+3. **Weather** — Use WebSearch to find today's weather forecast for `<your-postcode> <your-city>, <your-country>`.
+4. **Vault reminders** — Scan the vault for any time-sensitive open items for today and tomorrow.
+
+Then compose a concise briefing (under 100 words) with these sections:
+
+- **📅 TODAY** — calendar events and any school/kindergarten notes relevant today
+- **⚠️ CONFLICTS** — flag any scheduling conflicts or overlaps
+- **🌤️ WEATHER** — brief weather summary
+- **🔔 REMINDER** — top 3 open items from the vault if time-sensitive AND due today. Do not repeat decisions already shared in a previous briefing. Do not include next week's appointments. If nothing qualifies, write "None".
+
+Send the briefing as a **single** message. Do NOT send a second message. After sending, silently save the briefing to `/workspace/extra/vault/02_Family/Briefings/YYYY/MM/YYYY-MM-DD.md` (create directories if needed) without sending another message about it.
+
+## Weekly Briefing (Sunday at 18:00)
+
+When I receive the scheduled weekly briefing task, I MUST follow these steps in order:
+
+1. **Calendar** — Run `gcal week` via Bash to get the next 7 days of events.
+2. **Vault files** — Read:
+   - `/workspace/extra/vault/00_Start/DecisionLog.md`
+   - `/workspace/extra/vault/Kids/Kid1/School/Events.md`
+   - `/workspace/extra/vault/Kids/Kid1/Kindergarten/Overview.md`
+   - `/workspace/extra/vault/Kids/Kid2/Kindergarten/Overview.md`
+3. **Weather** — Use WebSearch to find the weather forecast for `<your-postcode> <your-city>, <your-country>` this week.
+4. **Expenses** — Read the current month's expense file at `/workspace/extra/vault/02_Family/Expenses/YYYY/YYYY-MM.md` and sum the "Amount (EUR)" column.
+
+Then compose a briefing (under 200 words) prefixed with `[Nova] Weekly Briefing —` and these sections:
+
+- **📆 THIS WEEK** — bullet list of calendar events grouped by day, Mon–Sun
+- **⚠️ CONFLICTS** — overlaps or conflicts that need attention
+- **👧👦 FOR THE KIDS** — anything relevant to Kid1 or Kid2 this week
+- **📋 OPEN ITEMS** — anything in the vault marked as needing follow-up
+- **💡 ONE THING** — one small suggestion that would make the week run smoother
+- **💸 EXPENSES** — month-to-date expense total
+
+Send the briefing as a **single** message. Do NOT send a second message. After sending, silently save the briefing to `/workspace/extra/vault/02_Family/Briefings/YYYY/MM/YYYY-MM-DD_Sunday-Briefing.md` (create directories if needed) without sending another message about it.
+
+<!--
+Important note on single-message discipline:
+Any final response text from the agent after the scheduled task is automatically
+sent as a second WhatsApp message by NanoClaw's router. To avoid a "Done ✅"
+follow-up arriving in the group, this CLAUDE.md tells Nova to send exactly
+one message and then go silent. You likely want a similar rule near the top
+of your CLAUDE.md under "What I never do" or equivalent.
+-->

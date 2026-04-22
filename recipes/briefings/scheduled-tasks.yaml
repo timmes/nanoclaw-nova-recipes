@@ -1,0 +1,36 @@
+# Scheduled task definitions for the morning + weekly briefings.
+#
+# NanoClaw stores scheduled tasks in the `scheduled_tasks` table of
+# `store/messages.db`. There's no `apply this YAML` CLI yet — this file
+# documents the rows you need to insert (or create via `schedule_task` IPC).
+#
+# Replace placeholders:
+#   <your-group-folder>   — e.g. "whatsapp_nova_group"
+#   <your-chat-jid>       — the channel/chat that receives the briefings
+#                           (for a WhatsApp group: <id>@g.us; for a DM: <phone>@s.whatsapp.net)
+#
+# Cron is interpreted in the TZ NanoClaw was configured with
+# (process.env.TZ, .env TZ, or host timezone). See src/config.ts.
+
+tasks:
+  - id: morning-briefing
+    group_folder: <your-group-folder>
+    chat_jid: <your-chat-jid>
+    schedule_type: cron
+    schedule_value: "0 7 * * *"   # daily at 07:00
+    status: active
+    context_mode: isolated
+    prompt: |
+      Run the morning briefing. Follow the Morning Briefing instructions in
+      CLAUDE.md exactly.
+
+  - id: weekly-briefing
+    group_folder: <your-group-folder>
+    chat_jid: <your-chat-jid>
+    schedule_type: cron
+    schedule_value: "0 18 * * 0"  # Sundays at 18:00
+    status: active
+    context_mode: isolated
+    prompt: |
+      Run the weekly briefing. Follow the Weekly Briefing instructions in
+      CLAUDE.md exactly.
